@@ -73,6 +73,11 @@ var background2 = function background2(e){
     statube.setAttribute("stroke", "black");
     canvas.appendChild(statube);
 };
+
+
+var drawCharacter = function drawCharacter(e) {
+    var mainCharacter = document.createElementNS("http://www.w3.org/2000/svg", "image");
+};
 /*
 var pulse = function pulse(e) {
     if(canvas.childElementCount != 0){
