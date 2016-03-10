@@ -8,7 +8,7 @@ var rad = [];
 var start = document.getElementById("c");
 
 var setup = function setup(e) {
-    i = setInterval(background1,20);
+    i = setInterval(background1,1000);
 };
 
 var background1 = function background1(e) {
