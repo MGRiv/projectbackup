@@ -1,8 +1,8 @@
 var canvas = document.getElementById("canvas");
 var i;
 var countdown = 6;
-var xPos = [];
-var yPos = [];
+var xPos = [400];
+var yPos = [400];
 var rad = [];
 
 var start = document.getElementById("c");
@@ -35,7 +35,7 @@ var background1 = function background1(e) {
     count.setAttribute("x", 396);
     count.setAttribute("y", 500);
     count.setAttribute("fill", "black");
-    count.textContent = countdown;
+    count.textContent = countdown - 1;
     canvas.appendChild(count);
     countdown--;
     console.log(countdown);
@@ -80,13 +80,26 @@ var background2 = function background2(e){
 
 var drawObs = function drawObs(e) {
     var fcount;
-    for (fcount = 0; fcount < xPos.length; fcount++) {
-
+    
+    for (fcount = 0; fcount < xPos.length - 1; fcount++) {
+	xobs = xPos[fcount];
+	yobs = yPos[fcount];
+	var obs = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	obs.setAttribute("cx", xobs);
+	obs.setAttribute("cy", yobs);
+	obs.setAttribute("r", 10);
+	obs.setAttribute("fill", "black");
+	obs.setAttribute("stroke", "red");
+	canvas.appendChild(obs);
     }
 };
 
 var drawCharacter = function drawCharacter(e) {
     mainChar.updateImage();
+};
+
+var checkDeath = function checkDeath(e) {
+    console.log("check death");
 };
 /*
 var pulse = function pulse(e) {
