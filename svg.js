@@ -6,11 +6,11 @@ var yPos = [];
 var rad = [];
 
 var start = document.getElementById("c");
-var mainChar = new Image('./mainChar.png', 500, 500, 256, 256);
-canvas.appendChild(mainChar.getSVG());
+var mainChar;
 
 var setup = function setup(e) {
     i = setInterval(background1,1000);
+    
 };
 
 var background1 = function background1(e) {
@@ -44,6 +44,8 @@ var background1 = function background1(e) {
 	console.log("hi");
 	i = setInterval(update,17);
     }
+    mainChar = new Image('./mainChar.png', 375, 700, 50, 50); //the coordinate is the top left corner
+    canvas.appendChild(mainChar.getSVG());
 };
 
 var update = function update(e){
@@ -78,7 +80,7 @@ var background2 = function background2(e){
 
 
 var drawCharacter = function drawCharacter(e) {
-    
+    mainChar.updateImage();
 };
 /*
 var pulse = function pulse(e) {
