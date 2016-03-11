@@ -78,6 +78,12 @@ var background2 = function background2(e){
     canvas.appendChild(statube);
 };
 
+var drawObs = function drawObs(e) {
+    var fcount;
+    for (fcount = 0; fcount < xPos.length; fcount++) {
+
+    }
+};
 
 var drawCharacter = function drawCharacter(e) {
     mainChar.updateImage();
