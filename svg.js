@@ -80,7 +80,8 @@ var background2 = function background2(e){
 
 var drawObs = function drawObs(e) {
     var fcount;
-    
+
+    //we have to remember that these arrays lose their first element every draw
     for (fcount = 0; fcount < xPos.length - 1; fcount++) {
 	xobs = xPos[fcount];
 	yobs = yPos[fcount];
