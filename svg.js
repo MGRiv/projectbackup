@@ -6,6 +6,8 @@ var yPos = [];
 var rad = [];
 
 var start = document.getElementById("c");
+var mainChar = new Image('./mainChar.png', 500, 500, 256, 256);
+canvas.appendChild(mainChar.getSVG());
 
 var setup = function setup(e) {
     i = setInterval(background1,1000);
@@ -76,7 +78,7 @@ var background2 = function background2(e){
 
 
 var drawCharacter = function drawCharacter(e) {
-    var mainCharacter = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    
 };
 /*
 var pulse = function pulse(e) {
