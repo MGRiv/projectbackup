@@ -1,22 +1,33 @@
 var canvas = document.getElementById("canvas");
 var i;
 var countdown = 6;
-var xPos = [400];
-var yPos = [400];
+var xPos = [];
+var yPos = [];
 var rad = [];
-
+var direction = 0;
+var score = 0;
+var banner = document.getElementById("banner");
+var rank = document.getElementById("rank");
 var start = document.getElementById("c");
 var mainChar;
 
 var setup = function setup(e) {
+    clearInterval(i);
+    countdown = 6;
+    score = 0;
+    xPos = [];
+    yPos = [];
+    rad = [];
+    while(canvas.childElementCount != 0){
+	canvas.removeChild(canvas.children[0]);
+    };
     i = setInterval(background1,1000);
-    
 };
 
 var background1 = function background1(e) {
     while(canvas.childElementCount != 0){
 	canvas.removeChild(canvas.children[0]);
-    }
+    };
     var endtube = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     endtube.setAttribute("cx", 400);
     endtube.setAttribute("cy", 400);
@@ -31,37 +42,36 @@ var background1 = function background1(e) {
     statube.setAttribute("fill", "white");
     statube.setAttribute("stroke", "black");
     canvas.appendChild(statube);
-    var count = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    count.setAttribute("x", 396);
-    count.setAttribute("y", 500);
-    count.setAttribute("fill", "black");
-    count.textContent = countdown - 1;
-    canvas.appendChild(count);
+    banner.textContent = countdown - 1;
     countdown--;
     console.log(countdown);
     if(countdown < 1){
 	clearInterval(i);
 	console.log("hi");
-	i = setInterval(update,17);
-    }
-    mainChar = new Image('./mainChar.png', 375, 700, 50, 50); //the coordinate is the top left corner
+	i = setInterval(update,20);
+    };
+    mainChar = new Image('./mainChar.png', 395, 700, 10, 10); //the coordinate is the top left corner
     canvas.appendChild(mainChar.getSVG());
 };
 
 var update = function update(e){
     background2();
     drawObs();
+    spawnCircle();
     drawCharacter();
-    checkDeath();
+    score++;
 };
 
 var background2 = function background2(e){
+    xPos = [];
+    yPos = [];
+    rad = [];
     while(canvas.childElementCount != 0){
 	xPos.push(canvas.children[0].getAttribute("cx"));
 	yPos.push(canvas.children[0].getAttribute("cy"));
-	rad.push(canvas.children[0].getAttribute("cx"));
+	rad.push(canvas.children[0].getAttribute("r"));
 	canvas.removeChild(canvas.children[0]);
-    }
+    };
     var endtube = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     endtube.setAttribute("cx", 400);
     endtube.setAttribute("cy", 400);
@@ -76,105 +86,87 @@ var background2 = function background2(e){
     statube.setAttribute("fill", "white");
     statube.setAttribute("stroke", "black");
     canvas.appendChild(statube);
+    banner.textContent = "Score: " + score;
 };
 
 var drawObs = function drawObs(e) {
-    var fcount;
-
-    //we have to remember that these arrays lose their first element every draw
-    for (fcount = 0; fcount < xPos.length - 1; fcount++) {
-	xobs = xPos[fcount];
-	yobs = yPos[fcount];
-	var obs = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-	obs.setAttribute("cx", xobs);
-	obs.setAttribute("cy", yobs);
-	obs.setAttribute("r", 10);
-	obs.setAttribute("fill", "black");
-	obs.setAttribute("stroke", "red");
-	canvas.appendChild(obs);
-    }
-};
-
-var drawCharacter = function drawCharacter(e) {
-    mainChar.updateImage();
-};
-
-var checkDeath = function checkDeath(e) {
-    console.log("check death");
-};
-/*
-var pulse = function pulse(e) {
-    if(canvas.childElementCount != 0){
-	canvas.removeChild(canvas.children[0]);
-	clearInterval(i);
-    }
-    var diff = -1;
-    var rad = 0;
-    var col = "#ff0000";
-    var cir = function (e) {
-	if(canvas.childElementCount != 0){
-	    canvas.removeChild(canvas.children[0]);
-	}
-	var c1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-	if(rad == 250 || rad == 0){
-	    diff = diff * -1;
-	    if(col == "#ff0000"){
-		col = "#00ff00";
-	    }else if(col == "#00ff00"){
-		col = "#0000ff";
-	    }else{
-		col = "#ff0000";
+    var fcount = 0;
+    for (fcount = xPos.length - 1; fcount >= 0; fcount--) {
+	var xobs = xPos[fcount] - 400;
+	var yobs = yPos[fcount] - 400;
+	var test = Math.sqrt(Math.pow(xobs,2) + Math.pow(yobs,2));
+	var mod = 1;
+	if (xobs != null && yobs != null && test >= 9 && test < 360){
+	    var robs = rad[fcount];
+	    var obs = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	    var theta = Math.atan(yobs / xobs) + direction;
+	    if(yobs < 0){
+		theta += Math.PI;
+	    }
+	    if((yobs > 0 && xobs < 0) || (yobs < 0 && xobs > 0)){
+		mod = -1;
+	    }
+	    var d = test + 4;
+	    var xcalc = (d * Math.cos(theta) * mod) + 400;
+	    var ycalc = (d * Math.sin(theta) * mod) + 400;
+	    var rcalc = robs * 1.036;
+	    obs.setAttribute("cx", xcalc);
+	    obs.setAttribute("cy", ycalc);
+	    obs.setAttribute("r", rcalc);
+	    obs.setAttribute("fill", "red");
+	    obs.setAttribute("stroke", "black");
+	    canvas.appendChild(obs);
+	    if(Math.sqrt(Math.pow(xcalc - 400,2) + Math.pow(ycalc - 705,2)) < rcalc){
+		clearInterval(i);
+		gameOver();
 	    }
 	}
-	rad = rad + diff;
-	c1.setAttribute("cx", 250);
-	c1.setAttribute("cy", 250);
-	c1.setAttribute("r", rad);
-	c1.setAttribute("fill", col);
-	c1.setAttribute("stroke", "black");
-	canvas.appendChild(c1);
     }
-    i = setInterval(cir,25);
-}
-
-var bounce = function bounce(e) {
-    if(canvas.childElementCount != 0){
-	canvas.removeChild(canvas.children[0]);
-	clearInterval(i);
-    }
-    var posx = Math.floor(Math.random() * 300) + 100;
-    var posy = Math.floor(Math.random() * 300) + 100;
-    var xdiff = 1;    
-    var ydiff = 0;
-    var mod = .05;
-    var move = function (e) {
-	if(canvas.childElementCount != 0){
-	    canvas.removeChild(canvas.children[0]);
-	}
-	posx += xdiff;
-	posy += ydiff;
-	if(posx < 20 || posx > 480){
-	    posx -= xdiff;
-	    xdiff *= -1;
-	}
-	if(posy > 480){
-	    posy -= ydiff;
-	    ydiff *= -1;
-	}
-	ydiff += mod;
-	var c2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-	c2.setAttribute("cx", posx);
-	c2.setAttribute("cy", posy);
-	c2.setAttribute("r", 20);
-	c2.setAttribute("fill", "#ff0000");
-	c2.setAttribute("stroke", "black");
-	canvas.appendChild(c2);
-    };
-    i = setInterval(move,25);
 };
 
-var cease = function cease(e) {
-    clearInterval(i);
+var spawnCircle = function spawnCirlce(e) {
+    var obs = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    var theta = Math.random() * Math.PI * 2;
+    //var theta = 1 * Math.PI / 3;
+    console.log(theta);
+    var xcalc = (Math.cos(theta) * 10) + 400;
+    var ycalc = (Math.sin(theta) * 10) + 400;
+    console.log(xcalc);
+    console.log(ycalc);
+    var rcalc = 1;
+    obs.setAttribute("cx", xcalc);
+    obs.setAttribute("cy", ycalc);
+    obs.setAttribute("r", rcalc);
+    obs.setAttribute("fill", "red");
+    obs.setAttribute("stroke", "black");
+    canvas.appendChild(obs);
 };
-*/
+
+
+var drawCharacter = function drawCharacter(e) {
+    mainChar = new Image('./mainChar.png', 395, 700, 10, 10);
+    canvas.appendChild(mainChar.getSVG());
+};
+
+document.onkeydown = checkKey;
+document.onkeyup = other;
+function checkKey(e) {
+    console.log(e.keyCode);
+    e = e || window.event;
+    if (e.keyCode == '37') {
+	direction = -1 * Math.PI / 180;
+    }
+    else if (e.keyCode == '39') {
+        direction = Math.PI / 180;
+    }
+};
+var gameOver = function gameOver(e) {
+    banner.textContent = "Game Over. Your score was: " + score;
+    rank.textContent = "Your previous score was: " + score;
+};
+
+function other(e) {
+    direction = 0;
+};
+
 start.addEventListener("click",setup);
